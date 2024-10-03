@@ -1,252 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Water Quality Prediction</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            position: relative;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url("{{ url_for('static', filename='get-started-bg.jpg') }}");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            z-index: -1; /* Place it behind the content */
-        }
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("{{ url_for('static', filename='get-started-bg.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: -1; /* Place it behind the content */
+      }
 
-        .overlay {
-            background-color: rgba(0, 0, 0, 0.5);
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: -1;
-        }
+      .overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+      }
 
-        h1 {
-            text-align: center;
-            font-size: x-large;
-            margin-bottom: 50px;
-            color: #ffffff;
-        }
+      h1 {
+        text-align: center;
+        font-size: x-large;
+        margin-bottom: 50px;
+        color: #ffffff;
+      }
 
-        form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            max-width: 800px;
-            background-color: rgba(106, 111, 130, 0.7);
-            padding: 20px;
-            width: 500px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+      form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #000000;
-        }
+        background-color: rgba(106, 111, 130, 0.7);
+        padding: 20px;
+        width: 1000px;
+        
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
 
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            background-color: #e1f0ff;
-            box-sizing: border-box;
-        }
+      
 
-        button {
-            grid-column: span 2;
-            padding: 10px 20px;
-            background-color: #6a2ce8;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: -20px;
-        }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #000000;
+      }
 
-        button:hover {
-            background-color: #5500ff;
-        }
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        background-color: #e1f0ff;
+        box-sizing: border-box;
+      }
 
-        #result {
-            grid-column: span 2;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 18px;
-            color: #ffffff;
-            padding: 10px;
-            border-radius: 5px;
-            display: inline-block;
-            white-space: nowrap;
-        }
+      button {
+        grid-column: span 2;
+        padding: 10px 20px;
+        background-color: #6a2ce8;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: -40px;
+      }
 
-        /* Section division */
-        .form-section {
-            grid-column: span 2;
-            display: flex;
-            justify-content: space-between;
-        }
+      button:hover {
+        background-color: #5500ff;
+      }
 
-        .form-section > div {
-            width: 48%;
-        }
+      #result {
+        grid-column: span 2;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 18px;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 5px;
+        display: inline-block;
+        white-space: nowrap;
+      }
 
-        /* Modal styles */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-            padding-top: 350px;
-        }
+      /* Section division */
+      .form-section {
+        grid-column: span 2;
+        gap: 30px;
+        display: flex;
+        justify-content: space-between;
+      }
 
-        /* Modal Content */
-        .modal-content {
-            background-color: lightblue; /* Set background color to light blue */
-            margin: 15% auto; /* Center it vertically and horizontally */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 30%; /* Set a fixed width */
-            text-align: center;
-            border-radius: 10px; /* Add rounded corners for aesthetic */
-        }
+      .form-section > div {
+        width: 48%;
+      }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
+      /* Modal styles */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        padding-top: 350px;
+      }
 
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
+      /* Modal Content */
+      .modal-content {
+        background-color: lightblue; /* Set background color to light blue */
+        margin: 15% auto; /* Center it vertically and horizontally */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 30%; /* Set a fixed width */
+        text-align: center;
+        border-radius: 10px; /* Add rounded corners for aesthetic */
+      }
+
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .formSec{
+
+        padding-bottom: 100px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="overlay"></div>
-    <div>
-        <h1><u>Water Quality Prediction</u></h1>
-        <form id="predictForm">
-            <div class="form-section">
-                <div>
-                    <label for="pH">pH:</label>
-                    <input type="text" id="pH" name="pH" required />
+    <div class="formSec">
+      <h1><u>Water Quality Prediction</u></h1>
+      <form id="predictForm">
+        <div class="form-section">
+          <div>
+            <label for="pH">pH:</label>
+            <input type="text" id="pH" name="pH" required />
 
-                    <label for="Nitrate">Nitrate:</label>
-                    <input type="text" id="Nitrate" name="Nitrate" required />
+            <label for="Nitrate">Nitrate:</label>
+            <input type="text" id="Nitrate" name="Nitrate" required />
+          </div>
 
-                    <label for="Chloride">Chloride:</label>
-                    <input type="text" id="Chloride" name="Chloride" required />
+          <div>
+            <label for="Chloride">Chloride:</label>
+            <input type="text" id="Chloride" name="Chloride" required />
 
-                    <label for="Color">Color:</label>
-                    <input type="text" id="Color" name="Color" required />
+            <label for="Color">Color:</label>
+            <input type="text" id="Color" name="Color" required />
+            <br />Faint Yellow = 1<br />
+            Light Yellow = 2<br />
 
-                    <label for="Turbidity">Turbidity:</label>
-                    <input type="text" id="Turbidity" name="Turbidity" required />
-                </div>
-                <div>
-                    <label for="Fluoride">Fluoride:</label>
-                    <input type="text" id="Fluoride" name="Fluoride" required />
+            Near Colorless = 3<br />
 
-                    <label for="Copper">Copper:</label>
-                    <input type="text" id="Copper" name="Copper" required />
+            Yellow = 4
+          </div>
 
-                    <label for="Odor">Odor:</label>
-                    <input type="text" id="Odor" name="Odor" required />
+          <div>
+            <label for="Turbidity">Turbidity:</label>
+            <input type="text" id="Turbidity" name="Turbidity" required />
 
-                    <label for="Chlorine">Chlorine:</label>
-                    <input type="text" id="Chlorine" name="Chlorine" required />
-                </div>
-            </div>
-            <div id="result"></div>
-            <button type="submit">Predict</button>
-        </form>
+            <label for="Fluoride">Fluoride:</label>
+            <input type="text" id="Fluoride" name="Fluoride" required />
+          </div>
+
+          <div>
+            <label for="Copper">Copper:</label>
+            <input type="text" id="Copper" name="Copper" required />
+
+            <label for="Odor">Odor:</label>
+            <input type="text" id="Odor" name="Odor" required />
+          </div>
+
+          <div>
+            <label for="Chlorine">Chlorine:</label>
+            <input type="text" id="Chlorine" name="Chlorine" required />
+          </div>
+        </div>
+        <div id="result"></div>
+        <button type="submit">Predict</button>
+      </form>
     </div>
 
     <!-- Modal Structure -->
     <div id="resultModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <p id="modalMessage"></p>
-        </div>
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modalMessage"></p>
+      </div>
     </div>
 
     <script>
-        document.getElementById("predictForm").onsubmit = async function (e) {
-            e.preventDefault(); // Prevent form submission
-            const formData = new FormData(this); // Get form data
-            const response = await fetch("/predict", {
-                method: "POST",
-                body: formData,
-            });
-            const result = await response.json(); // Parse JSON response
+      document.getElementById("predictForm").onsubmit = async function (e) {
+        e.preventDefault(); // Prevent form submission
+        const formData = new FormData(this); // Get form data
+        const response = await fetch("/predict", {
+          method: "POST",
+          body: formData,
+        });
+        const result = await response.json(); // Parse JSON response
 
-            let message = "";
-            const modalMessage = document.getElementById("modalMessage");
-            const modal = document.getElementById("resultModal");
+        let message = "";
+        const modalMessage = document.getElementById("modalMessage");
+        const modal = document.getElementById("resultModal");
 
-            if (result.prediction === 1) {
-                message = "[1]: Water is good for use";
-            } else if (result.prediction === 0) {
-                message = "[0]: Water is not suitable for use";
-            } else {
-                message = "Unexpected prediction value.";
-            }
+        if (result.prediction === 1) {
+          message = "[1]: Water is good for use";
+        } else if (result.prediction === 0) {
+          message = "[0]: Water is not suitable for use";
+        } else {
+          message = "Unexpected prediction value.";
+        }
 
-            modalMessage.innerText = "Prediction " + message; // Set the message in modal
-            modal.style.display = "block"; // Show the modal
-        };
+        modalMessage.innerText = "Prediction " + message; // Set the message in modal
+        modal.style.display = "block"; // Show the modal
+      };
 
-        // Get the <span> element that closes the modal
-        const span = document.getElementsByClassName("close")[0];
+      // Get the <span> element that closes the modal
+      const span = document.getElementsByClassName("close")[0];
 
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            const modal = document.getElementById("resultModal");
-            modal.style.display = "none"; // Hide the modal
-        };
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function () {
+        const modal = document.getElementById("resultModal");
+        modal.style.display = "none"; // Hide the modal
+      };
 
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function (event) {
-            const modal = document.getElementById("resultModal");
-            if (event.target == modal) {
-                modal.style.display = "none"; // Hide the modal
-            }
-        };
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function (event) {
+        const modal = document.getElementById("resultModal");
+        if (event.target == modal) {
+          modal.style.display = "none"; // Hide the modal
+        }
+      };
     </script>
-</body>
+  </body>
 </html>
