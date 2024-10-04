@@ -28,7 +28,7 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        z-index: -1; /* Place it behind the content */
+        z-index: -1;
       }
 
       .overlay {
@@ -43,7 +43,7 @@
 
       h1 {
         text-align: center;
-        font-size: x-large;
+        font-size: 30px;
         margin-bottom: 50px;
         color: #ffffff;
       }
@@ -52,16 +52,13 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
-
         background-color: rgba(106, 111, 130, 0.7);
         padding: 20px;
         width: 1000px;
-        
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        justify-items: center;
       }
-
-      
 
       label {
         display: block;
@@ -90,6 +87,8 @@
         cursor: pointer;
         font-size: 16px;
         margin-top: -40px;
+        width: 250px;
+        align-items: center;
       }
 
       button:hover {
@@ -108,7 +107,6 @@
         white-space: nowrap;
       }
 
-      /* Section division */
       .form-section {
         grid-column: span 2;
         gap: 30px;
@@ -120,29 +118,27 @@
         width: 48%;
       }
 
-      /* Modal styles */
       .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
+        display: none;
+        position: fixed;
+        z-index: 1;
         left: 0;
         top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
         padding-top: 350px;
       }
 
-      /* Modal Content */
       .modal-content {
-        background-color: lightblue; /* Set background color to light blue */
-        margin: 15% auto; /* Center it vertically and horizontally */
+        background-color: lightblue;
+        margin: 15% auto;
         padding: 20px;
         border: 1px solid #888;
-        width: 30%; /* Set a fixed width */
+        width: 30%;
         text-align: center;
-        border-radius: 10px; /* Add rounded corners for aesthetic */
+        border-radius: 10px;
       }
 
       .close {
@@ -159,9 +155,18 @@
         cursor: pointer;
       }
 
-      .formSec{
-
+      .formSec {
         padding-bottom: 100px;
+      }
+
+      select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        background-color: #e1f0ff;
+        box-sizing: border-box;
       }
     </style>
   </head>
@@ -184,13 +189,13 @@
             <input type="text" id="Chloride" name="Chloride" required />
 
             <label for="Color">Color:</label>
-            <input type="text" id="Color" name="Color" required />
-            <br />Faint Yellow = 1<br />
-            Light Yellow = 2<br />
-
-            Near Colorless = 3<br />
-
-            Yellow = 4
+            <select id="Color" name="Color" required>
+              <option value="" disabled selected><b>Select Colour</b></option>
+              <option value="1">Faint Yellow</option>
+              <option value="2">Light Yellow</option>
+              <option value="3">Near Colorless</option>
+              <option value="4">Yellow</option>
+            </select>
           </div>
 
           <div>
@@ -227,6 +232,9 @@
       </div>
     </div>
 
+    <!-- Include jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <script>
       document.getElementById("predictForm").onsubmit = async function (e) {
         e.preventDefault(); // Prevent form submission
@@ -251,6 +259,95 @@
 
         modalMessage.innerText = "Prediction " + message; // Set the message in modal
         modal.style.display = "block"; // Show the modal
+
+        // Prepare the input details and result for the report
+        const pH = document.getElementById("pH").value;
+        const Nitrate = document.getElementById("Nitrate").value;
+        const Chloride = document.getElementById("Chloride").value;
+        const Color = document.getElementById("Color").value;
+        const Turbidity = document.getElementById("Turbidity").value;
+        const Fluoride = document.getElementById("Fluoride").value;
+        const Copper = document.getElementById("Copper").value;
+        const Odor = document.getElementById("Odor").value;
+        const Chlorine = document.getElementById("Chlorine").value;
+
+        // Create PDF with jsPDF
+        // Create PDF with jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Set up the title style
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.setTextColor(40, 55, 71); // Dark color for title
+
+        // Add title with an underline
+        const title = "Water Quality Prediction Report";
+        const titleWidth = doc.getTextWidth(title);
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const titleX = (pageWidth - titleWidth) / 2; // Center title
+        doc.text(title, titleX, 20);
+        doc.line(10, 22, 200, 22); // Underline for the title
+
+        // Add a small margin
+        const margin = 10;
+        let currentY = 30;
+
+        // Set normal font for details
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        doc.setTextColor(50, 50, 50); // Grey color for details
+
+        // Add input details to the PDF with organized spacing
+        const details = [
+          `pH: ${pH}`,
+          `Nitrate: ${Nitrate}`,
+          `Chloride: ${Chloride}`,
+          `Color: ${Color}`,
+          `Turbidity: ${Turbidity}`,
+          `Fluoride: ${Fluoride}`,
+          `Copper: ${Copper}`,
+          `Odor: ${Odor}`,
+          `Chlorine: ${Chlorine}`,
+        ];
+
+        // Add details with a border around them
+        const detailBoxY = currentY - 5; // Position for box
+        const boxWidth = 190; // Width of the box
+        const boxHeight = details.length * 10 + 10; // Height of the box based on details
+
+        // Draw a border box
+        doc.setDrawColor(200, 200, 200); // Light gray for the box
+        doc.rect(10, detailBoxY, boxWidth, boxHeight); // Draw box
+
+        // Set text margin
+        const textMargin = 5;
+
+        details.forEach((detail) => {
+          doc.text(detail, 15, currentY); // Indent text
+          currentY += 10; // Move to the next line
+        });
+
+        // Add Prediction Result
+        currentY += 10; // Add some space before prediction result
+        doc.setFont("helvetica", "bold"); // Bold font for prediction result
+        doc.setTextColor(0, 102, 204); // Blue color for prediction result
+        const predictionResult = `Prediction Result: ${message}`;
+        const predictionWidth = doc.getTextWidth(predictionResult);
+        const predictionX = (pageWidth - predictionWidth) / 2; // Center align
+        doc.text(predictionResult, predictionX, currentY);
+
+        // Optional: Add a footer
+        currentY += 20; // Add space before footer
+        doc.setFont("helvetica", "italic"); // Italic font for footer
+        doc.setTextColor(150, 150, 150); // Gray color for footer
+        const footerText = "Generated by TrendTrackers";
+        const footerWidth = doc.getTextWidth(footerText);
+        const footerX = (pageWidth - footerWidth) / 2; // Center align footer
+        doc.text(footerText, footerX, currentY);
+
+        // Save the PDF
+        doc.save("Water_Quality_Prediction_Report.pdf");
       };
 
       // Get the <span> element that closes the modal
