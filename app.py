@@ -50,4 +50,4 @@ def predict():
     return jsonify({'prediction': prediction_value})  # Return the prediction as JSON
 
 if __name__ == '__main__':  # Check if the script is run directly
-    app.run(debug=False,host='0.0.0.0')  # Start the Flask application in debug mode
+    app.run(debug=False)  # Start the Flask application in debug mode
